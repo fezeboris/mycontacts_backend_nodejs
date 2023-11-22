@@ -7,7 +7,8 @@ const jwt = require("jsonwebtoken");
 // @access public
 
 const getAllUsers = asyncHandler(async (req, res) => {
-  res.status(200).json({ message: "Users List" });
+  const users = await User.find({});
+  res.status(200).json({ message: "Users List", data: users });
 });
 
 // @desc Register user
@@ -79,6 +80,11 @@ const loginUser = asyncHandler(async (req, res) => {
 // @access public
 
 const getCurrentUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    res.status(404);
+    throw new Error("user not found");
+  }
   res.json(req.user);
 });
 
@@ -93,12 +99,10 @@ const updateUser = asyncHandler(async (req, res) => {
     throw new Error("user not found");
   }
 
-  //   const updatedContact = await Contact.findByIdAndUpdate(
-  //     req.params.id,
-  //     req.body,
-  //     { new: true }
-  //   );
-  res.status(200).json(updatedContact);
+  const updatedUser = await Contact.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+  res.status(200).json(updatedUser);
 });
 
 module.exports = {
